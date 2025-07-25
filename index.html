@@ -22,7 +22,7 @@
     <!-- Tailwind CSS -->
     <link href="./output.css" rel="stylesheet" />
 
-     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
   </head>
 
   <body class="min-h-screen bg-white relative overflow-x-hidden  ">
@@ -33,7 +33,7 @@
    
    
     <!-- 🌐 Navigation -->
-<header class="w-full" >
+<header class="w-full" id="header">
         <!-- <img src="images/top image.png" alt="" class="designTop hidden lg:block "> -->
 
 <!-- Toggle Button (only visible on mobile) -->
@@ -42,12 +42,11 @@
 
 <!-- Desktop Nav (visible on large screens) -->
 <nav class="fixed w-screen  h-[80px] bg-white pb-4 pt-4 z-50 hidden xl:block " style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
-  <ul class="lg:flex  justify-center hidden gap-5 ">
-   <li><a href="#" class="hover:text-lime-500 text-lime-500  itim-regular text-3xl uppercase">Home</a></li>
-    <li><a href="#services" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase">Services</a></li>
-    <li><a href="#products" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase">products</a></li>
-    <li><a href="#about" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase">About</a></li>
-   
+ <ul class="lg:flex justify-center hidden gap-5" id="navList">
+    <li><a href="#header" class="hover:text-lime-500 text-lime-500 itim-regular text-3xl uppercase navItem ">Home</a></li>
+    <li><a href="#services" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase navItem">Services</a></li>
+    <li><a href="#products" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase navItem">Products</a></li>
+    <li><a href="#about" class="text-gray-700 hover:text-lime-500 itim-regular text-3xl uppercase navItem">About</a></li>
   </ul>
 
   <div class="px-3 py-3 bg-lime-500 absolute right-10 top-3.5 text-white hover:cursor-pointer rounded-2xl shadow">
@@ -64,7 +63,7 @@
     <li><a href="#" class="text-gray-700 hover:text-lime-500 itim-regular text-2xl uppercase">Home</a></li>
     <li><a href="#services" class="text-gray-700 hover:text-lime-500 itim-regular text-2xl uppercase">Services</a></li>
     <li><a href="#products" class="text-gray-700 hover:text-lime-500 itim-regular text-2xl uppercase">products</a></li>
-    <li><a href="#about"" class="text-gray-700 hover:text-lime-500 itim-regular text-2xl uppercase">About</a></li>
+    <li><a href="#about" class="text-gray-700 hover:text-lime-500 itim-regular text-2xl uppercase">About</a></li>
     
   </ul>
 
@@ -116,7 +115,7 @@
     </header>
     
 
-    <section id="services" class="min-w-screen bg-gray-200 min-h-auto m-auto mt-28 itim-regular ">
+    <section id="services" class="min-w-screen bg-gray-200 min-h-auto m-auto mt-28 xl:mt-10 itim-regular ">
    <div class="flex justify-center flex-col m-auto">
     <h1 class="relative inline-block text-2xl lg:text-4xl uppercase font-extrabold text-gray-950 pt-3 text-center m-auto "data-aos="slide-up" data-aos-duration="4000">
   <!-- <span class="absolute inset-7 bottom-0 left-6 bg-lime-400 -skew-x-14 h-3 z-0"></span> -->
@@ -660,11 +659,86 @@
       menuToggle.classList.add('fa-xmark');
     }
   });
+     
+   
+
 </script>
   <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
   <script>
     AOS.init();
   </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const navItems = document.querySelectorAll(".navItem");
+
+    // Map section IDs to nav links
+    const sectionMap = {};
+    navItems.forEach(item => {
+      const href = item.getAttribute("href");
+      if (href.startsWith("#")) {
+        sectionMap[href.slice(1)] = item;
+      }
+    });
+
+    let clickedManually = false;
+
+    // Manual click listener
+    navItems.forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault(); // prevent default jump
+        clickedManually = true;
+
+        // Scroll to section smoothly
+        const id = item.getAttribute("href").substring(1);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+        // Apply active style
+        navItems.forEach(i => {
+          i.classList.remove("text-lime-500");
+          i.classList.add("text-gray-700");
+        });
+
+        item.classList.add("text-lime-500");
+        item.classList.remove("text-gray-700");
+
+        // Reset manual flag after short delay
+        setTimeout(() => {
+          clickedManually = false;
+        }, 1000);
+      });
+    });
+
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      if (clickedManually) return; // skip scroll update if manually clicked
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          const navItem = sectionMap[id];
+
+          if (navItem) {
+            navItems.forEach(i => {
+              i.classList.remove("text-lime-500");
+              i.classList.add("text-gray-700");
+            });
+
+            navItem.classList.add("text-lime-500");
+            navItem.classList.remove("text-gray-700");
+          }
+        }
+      });
+    }, {
+      threshold: 0.6
+    });
+
+    Object.keys(sectionMap).forEach(id => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+  });
+</script>
+
 <!-- WhatsApp Floating Button -->
 
 <!-- ✅ Add in <head> to fix scaling issues on mobile -->
